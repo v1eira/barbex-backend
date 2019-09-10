@@ -16,6 +16,11 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      photo: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        unique: false,
+      },
       password_hash: {
         type: Sequelize.STRING,
         allowNull: false,
