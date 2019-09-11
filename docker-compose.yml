@@ -1,0 +1,29 @@
+version: '3'
+services:
+  postgrebarbex:
+    image: postgres:11-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: barbex
+      POSTGRES_PASSWORD: barbex
+    volumes:
+      - postgres:/var/lib/postgresql/data
+  mongobarbex:
+    image: mongo:4
+    ports:
+      - '27017:27017'
+  redisbarbex:
+    image: redis:5-alpine
+    ports:
+      - '6379:6379'
+  pgadminbarbex:
+    image: dpage/pgadmin4:4
+    ports:
+      - '8081:8081'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: barbex@barbex.com
+      PGADMIN_DEFAULT_PASSWORD: barbex
+      PGADMIN_LISTEN_PORT: 8081
+volumes:
+  postgres: ~
