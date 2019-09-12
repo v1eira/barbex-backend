@@ -1,6 +1,6 @@
 version: '3'
 services:
-  postgrebarbex:
+  postgres:
     image: postgres:11-alpine
     ports:
       - '5432:5432'
@@ -9,15 +9,15 @@ services:
       POSTGRES_PASSWORD: barbex
     volumes:
       - postgres:/var/lib/postgresql/data
-  mongobarbex:
+  mongo:
     image: mongo:4
     ports:
       - '27017:27017'
-  redisbarbex:
+  redis:
     image: redis:5-alpine
     ports:
       - '6379:6379'
-  pgadminbarbex:
+  pgadmin:
     image: dpage/pgadmin4:4
     ports:
       - '8081:8081'
