@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
 
+import User from '../models/User';
 import authConfig from '../../config/auth';
 
 export default async (req, res, next) => {
@@ -15,7 +16,16 @@ export default async (req, res, next) => {
   try {
     const decoded = await promisify(jwt.verify)(token, authConfig.secret);
 
+    const user = await User.findOne({
+      where: { id: decoded.id },
+    });
+
     req.userId = decoded.id;
+    req.user = user;
+
+    if (!user.active) {
+      return res.status(401).json({ error: 'User is inactive' });
+    }
 
     return next();
   } catch (err) {
