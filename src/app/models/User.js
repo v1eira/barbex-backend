@@ -10,7 +10,10 @@ class User extends Model {
         photo: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
-        provider: Sequelize.BOOLEAN,
+        active: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: true,
+        },
       },
       {
         sequelize,
@@ -26,7 +29,7 @@ class User extends Model {
     return this;
   }
 
-  static associate(/* models */) {}
+  static associate(/* models */) { }
 
   checkPassword(password) {
     return bcrypt.compare(password, this.password_hash);
