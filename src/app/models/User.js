@@ -7,13 +7,9 @@ class User extends Model {
       {
         name: Sequelize.STRING,
         email: Sequelize.STRING,
-        photo: Sequelize.STRING,
         password: Sequelize.VIRTUAL,
         password_hash: Sequelize.STRING,
-        active: {
-          type: Sequelize.BOOLEAN,
-          defaultValue: true,
-        },
+        barber: Sequelize.BOOLEAN,
       },
       {
         sequelize,
@@ -29,7 +25,9 @@ class User extends Model {
     return this;
   }
 
-  static associate(/* models */) { }
+  static associate(models) {
+    this.belongsTo(models.Image, { foreignKey: 'avatar_id', as: 'avatar' });
+  }
 
   checkPassword(password) {
     return bcrypt.compare(password, this.password_hash);

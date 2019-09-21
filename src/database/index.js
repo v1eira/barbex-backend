@@ -2,10 +2,11 @@ import Sequelize from 'sequelize';
 import mongoose from 'mongoose';
 
 import User from '../app/models/User';
+import Image from '../app/models/Image';
 
 import databaseConfig from '../config/database';
 
-const models = [User];
+const models = [User, Image];
 
 class Database {
   constructor() {

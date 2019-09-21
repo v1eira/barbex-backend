@@ -23,10 +23,6 @@ export default async (req, res, next) => {
     req.userId = decoded.id;
     req.user = user;
 
-    if (!user.active) {
-      return res.status(401).json({ error: 'User is inactive' });
-    }
-
     return next();
   } catch (err) {
     return res.status(401).json({ error: 'Token invalid' });
