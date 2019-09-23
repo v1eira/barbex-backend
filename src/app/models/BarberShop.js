@@ -5,6 +5,7 @@ class BarberShop extends Model {
     super.init(
       {
         name: Sequelize.STRING,
+        address: Sequelize.STRING,
       },
       {
         sequelize,
@@ -13,7 +14,11 @@ class BarberShop extends Model {
     return this;
   }
 
-  static associate(/* models */) {}
+  static associate(models) {
+    this.hasMany(models.Operation, {
+      foreignKey: 'barbershop_id',
+    });
+  }
 }
 
 export default BarberShop;
