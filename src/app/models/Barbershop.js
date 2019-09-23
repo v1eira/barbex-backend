@@ -1,27 +1,25 @@
 import Sequelize, { Model } from 'sequelize';
 
-class Operation extends Model {
+class Barbershop extends Model {
   static init(sequelize) {
     super.init(
       {
-        weekday: Sequelize.STRING,
-        opening_hour: Sequelize.TIME,
-        closing_hour: Sequelize.TIME,
+        name: Sequelize.STRING,
+        address: Sequelize.STRING,
       },
       {
         sequelize,
       }
     );
-
     return this;
   }
 
   static associate(models) {
-    this.belongsTo(models.Barbershop, {
+    this.hasMany(models.Operation, {
       foreignKey: 'barbershop_id',
-      targetKey: 'id',
+      sourceKey: 'id',
     });
   }
 }
 
-export default Operation;
+export default Barbershop;

@@ -26,8 +26,8 @@ routes.put('/notifications/:id', NotificationController.update);
 routes.post('/images', upload.single('file'), ImageController.store);
 
 routes.get('/:barbershopId/operation', OperationController.index);
-routes.post('/:barbershopId/operation', OperationController.store);
-routes.put('/:barbershopId/operation/:id', OperationController.update);
-routes.delete('/:barbershopId/operation/:id', OperationController.delete);
+// routes.post('/:barbershopId/operation', OperationController.store);
+// routes.put('/:barbershopId/operation/:id', OperationController.update);
+// routes.delete('/:barbershopId/operation/:id', OperationController.delete);
 
 export default routes;

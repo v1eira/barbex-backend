@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 
 import User from '../app/models/User';
 import Image from '../app/models/Image';
-import BarberShop from '../app/models/BarberShop';
+import Barbershop from '../app/models/Barbershop';
 import Operation from '../app/models/Operation';
 
 import databaseConfig from '../config/database';
 
-const models = [User, Image, BarberShop, Operation];
+const models = [User, Image, Barbershop, Operation];
 
 class Database {
   constructor() {
