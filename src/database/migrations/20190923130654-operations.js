@@ -21,7 +21,7 @@ module.exports = {
       },
       barbershop_id: {
         type: Sequelize.INTEGER,
-        references: { model: 'barbershop', key: 'id' },
+        references: { model: 'barbershops', key: 'id' },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
         allowNull: true,

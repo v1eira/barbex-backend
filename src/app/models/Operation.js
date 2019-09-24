@@ -19,6 +19,7 @@ class Operation extends Model {
   static associate(models) {
     this.belongsTo(models.Barbershop, {
       foreignKey: 'barbershop_id',
+      as: 'barbershop',
       targetKey: 'id',
     });
   }

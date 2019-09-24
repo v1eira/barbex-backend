@@ -6,6 +6,7 @@ class Barbershop extends Model {
       {
         name: Sequelize.STRING,
         address: Sequelize.STRING,
+        cnpj: Sequelize.STRING,
       },
       {
         sequelize,
