@@ -6,9 +6,13 @@ import Image from '../app/models/Image';
 import Barbershop from '../app/models/Barbershop';
 import Operation from '../app/models/Operation';
 
+import State from '../app/models/State';
+import City from '../app/models/City';
+import Address from '../app/models/Address';
+
 import databaseConfig from '../config/database';
 
-const models = [User, Image, Barbershop, Operation];
+const models = [User, Image, Barbershop, Operation, State, City, Address];
 
 class Database {
   constructor() {

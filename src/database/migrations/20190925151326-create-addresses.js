@@ -12,7 +12,7 @@ module.exports = {
         allowNull: false,
       },
       number: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       complement: {

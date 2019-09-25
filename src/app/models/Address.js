@@ -1,14 +1,14 @@
 import Sequelize, { Model } from 'sequelize';
 
-class Barber extends Model {
+class Address extends Model {
   static init(sequelize) {
     super.init(
       {
         street: Sequelize.STRING,
         number: Sequelize.STRING(10),
-        city: Sequelize.STRING,
-        sate: Sequelize.STRING(2),
-        country: Sequelize.STRING(2),
+        complement: Sequelize.STRING,
+        neighborhood: Sequelize.STRING,
+        cep: Sequelize.STRING,
       },
       {
         sequelize,
@@ -17,7 +17,9 @@ class Barber extends Model {
     return this;
   }
 
-  static associate(/* models */) {}
+  static associate(models) {
+    this.belongsTo(models.City, { foreignKey: 'city_id', as: 'city' });
+  }
 }
 
-export default Barber;
+export default Address;

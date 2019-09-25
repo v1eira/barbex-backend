@@ -5,7 +5,6 @@ class Barbershop extends Model {
     super.init(
       {
         name: Sequelize.STRING,
-        address: Sequelize.STRING,
         cnpj: Sequelize.STRING,
       },
       {
@@ -20,6 +19,7 @@ class Barbershop extends Model {
       foreignKey: 'barbershop_id',
       sourceKey: 'id',
     });
+    this.belongsTo(models.Address, { foreignKey: 'address_id', as: 'address' });
   }
 }
 
