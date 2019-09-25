@@ -14,6 +14,7 @@ class OperationController {
 
     const operations = await Operation.findAll({
       where: { barbershop_id: req.params.barbershopId },
+      attributes: { exclude: ['barbershop_id'] },
       include: [
         {
           model: Barbershop,
@@ -31,30 +32,12 @@ class OperationController {
       weekday: Yup.string()
         .matches(/(dom|seg|ter|qua|qui|sex|sab)/, { excludeEmptyString: true })
         .required(),
-      opening_hour: Yup.object().shape({
-        hours: Yup.number()
-          .integer()
-          .min(0)
-          .max(23)
-          .required(),
-        minutes: Yup.number()
-          .integer()
-          .min(0)
-          .max(59)
-          .required(),
-      }),
-      closing_hour: Yup.object().shape({
-        hours: Yup.number()
-          .integer()
-          .min(0)
-          .max(23)
-          .required(),
-        minutes: Yup.number()
-          .integer()
-          .min(0)
-          .max(59)
-          .required(),
-      }),
+      opening_hour: Yup.string()
+        .matches(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)
+        .required(),
+      closing_hour: Yup.string()
+        .matches(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)
+        .required(),
       barbershop_id: Yup.number()
         .integer()
         .required(),
@@ -86,10 +69,8 @@ class OperationController {
       });
     }
 
-    const opHour = req.body.opening_hour.hours;
-    const opMinute = req.body.opening_hour.minutes;
-    const clHour = req.body.closing_hour.hours;
-    const clMinute = req.body.closing_hour.minutes;
+    const opHour = Number(req.body.opening_hour.split(':', 1));
+    const clHour = Number(req.body.closing_hour.split(':', 1));
 
     if (opHour >= clHour) {
       return res.status(401).json({
@@ -97,98 +78,81 @@ class OperationController {
       });
     }
 
-    req.body.opening_hour = `${opHour}:${opMinute}`;
-    req.body.closing_hour = `${clHour}:${clMinute}`;
+    const { id } = await Operation.create(req.body);
 
     const {
       weekday,
       opening_hour,
       closing_hour,
-      barbershop_id,
-    } = await Operation.create(req.body);
+      barbershop,
+    } = await Operation.findByPk(id, {
+      include: [
+        {
+          model: Barbershop,
+          as: 'barbershop',
+          attributes: ['id', 'name', 'address', 'cnpj'],
+        },
+      ],
+    });
 
     return res.json({
       weekday,
       opening_hour,
       closing_hour,
-      barbershop_id,
+      barbershop,
     });
   }
 
   async update(req, res) {
     const schema = Yup.object().shape({
-      opening_hour: Yup.object().shape({
-        hours: Yup.number()
-          .integer()
-          .min(0)
-          .max(23),
-        minutes: Yup.number()
-          .integer()
-          .min(0)
-          .max(59)
-          .when('hours', (hours, field) => (hours ? field.required() : field)),
-      }),
-      closing_hour: Yup.object().shape({
-        hours: Yup.number()
-          .integer()
-          .min(0)
-          .max(23),
-        minutes: Yup.number()
-          .integer()
-          .min(0)
-          .max(59)
-          .when('hours', (hours, field) => (hours ? field.required() : field)),
-      }),
+      opening_hour: Yup.string()
+        .matches(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)
+        .when('closing_hour', (closing_hour, field) =>
+          closing_hour ? field : field.required()
+        ),
+      closing_hour: Yup.string().matches(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    if (req.body.opening_hour && !req.body.closing_hour) {
-      const opHour = req.body.opening_hour.hours;
-      const opMinute = req.body.opening_hour.minutes;
-
-      const { closing_hour } = await Operation.findByPk(req.params.id);
-      const clHour = Number(closing_hour.split(':', 1));
-      if (opHour >= clHour) {
-        return res.status(401).json({
-          error: 'Opening hour is greater than or equal to closing hour.',
-        });
-      }
-
-      req.body.opening_hour = `${opHour}:${opMinute}`;
-    }
-
-    if (req.body.closing_hour && !req.body.opening_hour) {
-      const clHour = req.body.closing_hour.hours;
-      const clMinute = req.body.closing_hour.minutes;
-
-      const { opening_hour } = await Operation.findByPk(req.params.id);
-      const opHour = Number(opening_hour.split(':', 1));
-      if (opHour >= clHour) {
-        return res.status(401).json({
-          error: 'Opening hour is greater than or equal to closing hour.',
-        });
-      }
-
-      req.body.closing_hour = `${clHour}:${clMinute}`;
-    }
-
+    // Se os dois campos de horário foram enviados na requisição
     if (req.body.opening_hour && req.body.closing_hour) {
-      const opHour = req.body.opening_hour.hours;
-      const opMinute = req.body.opening_hour.minutes;
-      const clHour = req.body.closing_hour.hours;
-      const clMinute = req.body.closing_hour.minutes;
+      const opHour = Number(req.body.opening_hour.split(':', 1));
+      const clHour = Number(req.body.closing_hour.split(':', 1));
 
       if (opHour >= clHour) {
         return res.status(401).json({
           error: 'Opening hour is greater than or equal to closing hour.',
         });
       }
+    }
 
-      req.body.opening_hour = `${opHour}:${opMinute}`;
-      req.body.closing_hour = `${clHour}:${clMinute}`;
+    // Se apenas um dos campos de horário foi enviado na requisição
+    if (req.body.opening_hour) {
+      const opHour = Number(req.body.opening_hour.split(':', 1));
+
+      const clHour = await Operation.findByPk(req.params.id, {
+        attributes: ['closing_hour'],
+      });
+
+      if (opHour >= clHour) {
+        return res.status(401).json({
+          error: 'Opening hour is greater than or equal to closing hour.',
+        });
+      }
+    } else {
+      const clHour = Number(req.body.closing_hour.split(':', 1));
+      const opHour = await Operation.findByPk(req.params.id, {
+        attributes: ['opening_hour'],
+      });
+
+      if (opHour >= clHour) {
+        return res.status(401).json({
+          error: 'Opening hour is greater than or equal to closing hour.',
+        });
+      }
     }
 
     const operation = await Operation.findByPk(req.params.id);
@@ -200,7 +164,6 @@ class OperationController {
       name,
       opening_hour,
       closing_hour,
-      barbershop_id,
       barbershop,
     } = await Operation.findByPk(req.params.id, {
       include: [
@@ -217,7 +180,6 @@ class OperationController {
       name,
       opening_hour,
       closing_hour,
-      barbershop_id,
       barbershop,
     });
   }
