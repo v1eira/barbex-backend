@@ -64,12 +64,16 @@ class BarbershopController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const nameExists = await Barbershop.findOne({
-      where: { name: req.body.name },
-    });
+    if (req.body.name) {
+      const nameExists = await Barbershop.findOne({
+        where: { name: req.body.name },
+      });
 
-    if (nameExists) {
-      return res.status(400).json({ error: 'Barbershop name already exists.' });
+      if (nameExists && nameExists.id !== Number(req.params.id)) {
+        return res
+          .status(400)
+          .json({ error: 'Barbershop name already exists.' });
+      }
     }
 
     const barbershop = await Barbershop.findByPk(req.params.id);
