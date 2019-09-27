@@ -10,14 +10,14 @@ import UsersAddressList from '../models/UsersAddressList';
 
 class UsersAddressListController {
   async index(req, res) {
-    const checkUserExists = await User.findByPk(req.params.id);
+    const checkUserExists = await User.findByPk(req.userId);
 
     if (!checkUserExists) {
       return res.status(400).json({ error: 'User does not exists.' });
     }
 
     const addresslist = await UsersAddressList.findAll({
-      where: { user_id: req.params.id },
+      where: { user_id: req.userId },
       attributes: ['id'],
       include: [
         {

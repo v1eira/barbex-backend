@@ -32,7 +32,7 @@ routes.post('/addresses', FullAddressController.store);
 routes.delete('/addresses/:id', FullAddressController.delete);
 routes.put('/addresses/:id', FullAddressController.update);
 
-routes.get('/addresseslists/:id', UsersAddressListController.index);
+routes.get('/addresseslists', UsersAddressListController.index);
 routes.post('/addresseslists', UsersAddressListController.store);
 
 routes.post('/barbershops', BarbershopController.store);
