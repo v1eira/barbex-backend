@@ -5,6 +5,7 @@ import User from '../app/models/User';
 import Image from '../app/models/Image';
 import Barbershop from '../app/models/Barbershop';
 import Operation from '../app/models/Operation';
+import Favorite from '../app/models/Favorite';
 
 import State from '../app/models/State';
 import City from '../app/models/City';
@@ -18,6 +19,7 @@ const models = [
   Image,
   Barbershop,
   Operation,
+  Favorite,
   State,
   City,
   Address,
