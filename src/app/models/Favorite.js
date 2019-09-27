@@ -1,6 +1,6 @@
 import { Model } from 'sequelize';
 
-class Favorites extends Model {
+class Favorite extends Model {
   static init(sequelize) {
     super.init(
       {},
@@ -25,4 +25,4 @@ class Favorites extends Model {
   }
 }
 
-export default Favorites;
+export default Favorite;

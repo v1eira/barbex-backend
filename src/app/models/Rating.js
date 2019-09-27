@@ -4,10 +4,7 @@ class Rating extends Model {
   static init(sequelize) {
     super.init(
       {
-        stars: {
-          type: Sequelize.ENUM,
-          values: [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0],
-        },
+        grade: Sequelize.FLOAT,
       },
       {
         sequelize,
@@ -16,7 +13,18 @@ class Rating extends Model {
     return this;
   }
 
-  static associate(/* models */) {}
+  static associate(models) {
+    this.belongsTo(models.Barbershop, {
+      foreignKey: 'barbershop_id',
+      as: 'barbershop',
+      targetKey: 'id',
+    });
+    this.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      as: 'user',
+      targetKey: 'id',
+    });
+  }
 }
 
 export default Rating;

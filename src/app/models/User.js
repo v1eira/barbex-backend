@@ -31,6 +31,10 @@ class User extends Model {
       foreignKey: 'user_id',
       sourceKey: 'id',
     });
+    this.hasMany(models.Favorite, {
+      foreignKey: 'user_id',
+      sourceKey: 'id',
+    });
   }
 
   checkPassword(password) {

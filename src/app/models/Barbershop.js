@@ -6,6 +6,7 @@ class Barbershop extends Model {
       {
         name: Sequelize.STRING,
         cnpj: Sequelize.STRING,
+        grade: Sequelize.FLOAT(1, 1),
       },
       {
         sequelize,

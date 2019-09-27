@@ -11,6 +11,7 @@ import OperationController from './app/controllers/OperationController';
 import FullAddressController from './app/controllers/FullAddressController';
 import UsersAddressListController from './app/controllers/UsersAddressListController';
 import FavoriteController from './app/controllers/FavoriteController';
+import RatingController from './app/controllers/RatingController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -48,5 +49,9 @@ routes.delete('/operations/:id', OperationController.delete);
 routes.get('/favorites', FavoriteController.index);
 routes.post('/favorites', FavoriteController.store);
 routes.delete('/favorites/:id', FavoriteController.delete);
+
+routes.get('/ratings/:id', RatingController.show);
+routes.get('/ratings/:id', RatingController.index);
+routes.post('/ratings', RatingController.store);
 
 export default routes;
