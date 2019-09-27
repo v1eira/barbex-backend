@@ -7,6 +7,11 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
+      main: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
       street: {
         type: Sequelize.STRING,
         allowNull: false,

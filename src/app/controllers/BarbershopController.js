@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import Barbershop from '../models/Barbershop';
+import Address from '../models/Address';
 
 class BarbershopController {
   async index(req, res) {
@@ -18,7 +19,9 @@ class BarbershopController {
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      address: Yup.string().required(),
+      address_id: Yup.number()
+        .integer()
+        .required(),
       cnpj: Yup.string()
         .required()
         .length(14),
@@ -44,12 +47,18 @@ class BarbershopController {
       return res.status(400).json({ error: 'CNPJ already in use.' });
     }
 
-    const { id, name, address, cnpj } = await Barbershop.create(req.body);
+    const checkAddressExists = await Address.findByPk(req.body.address_id);
+
+    if (!checkAddressExists) {
+      return res.status(400).json({ error: 'Address does not exists.' });
+    }
+
+    const { id, name, address_id, cnpj } = await Barbershop.create(req.body);
 
     return res.json({
       id,
       name,
-      address,
+      address_id,
       cnpj,
     });
   }

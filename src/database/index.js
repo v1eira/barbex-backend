@@ -9,10 +9,20 @@ import Operation from '../app/models/Operation';
 import State from '../app/models/State';
 import City from '../app/models/City';
 import Address from '../app/models/Address';
+import UsersAddressList from '../app/models/UsersAddressList';
 
 import databaseConfig from '../config/database';
 
-const models = [User, Image, Barbershop, Operation, State, City, Address];
+const models = [
+  User,
+  Image,
+  Barbershop,
+  Operation,
+  State,
+  City,
+  Address,
+  UsersAddressList,
+];
 
 class Database {
   constructor() {

@@ -8,6 +8,8 @@ import NotificationController from './app/controllers/NotificationController';
 import ImageController from './app/controllers/ImageController';
 import BarbershopController from './app/controllers/BarbershopController';
 import OperationController from './app/controllers/OperationController';
+import FullAddressController from './app/controllers/FullAddressController';
+import UsersAddressListController from './app/controllers/UsersAddressListController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -25,6 +27,13 @@ routes.get('/notifications', NotificationController.index);
 routes.put('/notifications/:id', NotificationController.update);
 
 routes.post('/images', upload.single('file'), ImageController.store);
+
+routes.post('/addresses', FullAddressController.store);
+routes.delete('/addresses/:id', FullAddressController.delete);
+routes.put('/addresses/:id', FullAddressController.update);
+
+routes.get('/addresseslists/:id', UsersAddressListController.index);
+routes.post('/addresseslists', UsersAddressListController.store);
 
 routes.post('/barbershops', BarbershopController.store);
 routes.get('/barbershops', BarbershopController.index);

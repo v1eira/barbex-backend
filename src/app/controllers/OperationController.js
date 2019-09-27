@@ -185,15 +185,7 @@ class OperationController {
   }
 
   async delete(req, res) {
-    const operation = await Operation.findByPk(req.params.id, {
-      include: [
-        {
-          model: Barbershop,
-          as: 'barbershop',
-          attributes: ['id', 'name', 'address', 'cnpj'],
-        },
-      ],
-    });
+    const operation = await Operation.findByPk(req.params.id);
 
     if (operation) {
       await operation.destroy();

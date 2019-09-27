@@ -4,6 +4,7 @@ class Address extends Model {
   static init(sequelize) {
     super.init(
       {
+        main: Sequelize.BOOLEAN,
         street: Sequelize.STRING,
         number: Sequelize.STRING(10),
         complement: Sequelize.STRING,
@@ -19,6 +20,10 @@ class Address extends Model {
 
   static associate(models) {
     this.belongsTo(models.City, { foreignKey: 'city_id', as: 'city' });
+    this.hasMany(models.UsersAddressList, {
+      foreignKey: 'address_id',
+      sourceKey: 'id',
+    });
   }
 }
 
