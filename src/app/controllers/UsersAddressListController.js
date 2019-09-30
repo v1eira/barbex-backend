@@ -18,14 +18,13 @@ class UsersAddressListController {
 
     const addresslist = await UsersAddressList.findAll({
       where: { user_id: req.userId },
-      attributes: ['id'],
+      attributes: ['id', 'main'],
       include: [
         {
           model: Address,
           as: 'address',
           attributes: [
             'id',
-            'main',
             'street',
             'number',
             'complement',
@@ -61,6 +60,7 @@ class UsersAddressListController {
       address_id: Yup.number()
         .integer()
         .required(),
+      main: Yup.boolean(),
     });
 
     if (!(await schema.isValid(req.body))) {

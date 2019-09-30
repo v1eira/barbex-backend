@@ -9,7 +9,6 @@ import UsersAddressList from '../models/UsersAddressList';
 class FullAddressController {
   async store(req, res) {
     const schema = Yup.object().shape({
-      main: Yup.boolean(),
       street: Yup.string().required(),
       number: Yup.string().required(),
       complement: Yup.string(),
@@ -77,7 +76,6 @@ class FullAddressController {
     const newCity = await City.findOne({ where: { city: req.body.city } });
 
     const { id } = await Address.create({
-      main: req.body.main,
       street: req.body.street,
       number: req.body.number,
       complement: req.body.complement,
@@ -87,7 +85,6 @@ class FullAddressController {
     });
 
     const {
-      main,
       street,
       number,
       complement,
@@ -114,7 +111,6 @@ class FullAddressController {
 
     return res.json({
       id,
-      main,
       street,
       number,
       complement,
