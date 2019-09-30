@@ -36,6 +36,7 @@ routes.put('/addresses/:id', FullAddressController.update);
 
 routes.get('/addresseslists', UsersAddressListController.index);
 routes.post('/addresseslists', UsersAddressListController.store);
+routes.put('/addresseslists/:id', UsersAddressListController.update);
 
 routes.post('/barbershops', BarbershopController.store);
 routes.get('/barbershops', BarbershopController.index);

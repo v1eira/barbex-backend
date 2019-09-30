@@ -1,9 +1,11 @@
-import { Model } from 'sequelize';
+import { Model, Sequelize } from 'sequelize';
 
 class UsersAddressList extends Model {
   static init(sequelize) {
     super.init(
-      {},
+      {
+        main: Sequelize.BOOLEAN,
+      },
       {
         sequelize,
       }

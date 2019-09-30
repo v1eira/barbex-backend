@@ -4,7 +4,6 @@ class Address extends Model {
   static init(sequelize) {
     super.init(
       {
-        main: Sequelize.BOOLEAN,
         street: Sequelize.STRING,
         number: Sequelize.STRING(10),
         complement: Sequelize.STRING,

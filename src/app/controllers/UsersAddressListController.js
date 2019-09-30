@@ -93,6 +93,64 @@ class UsersAddressListController {
 
     return res.json(userAddress);
   }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      main: Yup.boolean().required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
+    const address = await UsersAddressList.findByPk(req.params.id);
+
+    if (!address) {
+      return res.status(400).json({ error: 'Address does not exists.' });
+    }
+
+    if (req.userId !== Number(address.user_id)) {
+      return res
+        .status(401)
+        .json({ error: 'User is not the owner of the address.' });
+    }
+
+    await address.update(req.body);
+
+    const addressItem = await UsersAddressList.findByPk(req.params.id, {
+      attributes: ['id', 'main'],
+      include: [
+        {
+          model: Address,
+          as: 'address',
+          attributes: [
+            'id',
+            'street',
+            'number',
+            'complement',
+            'neighborhood',
+            'cep',
+          ],
+          include: [
+            {
+              model: City,
+              as: 'city',
+              attributes: ['id', 'city'],
+              include: [
+                {
+                  model: State,
+                  as: 'state',
+                  attributes: ['id', 'state'],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.json(addressItem);
+  }
 }
 
 export default new UsersAddressListController();
