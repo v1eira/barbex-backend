@@ -5,10 +5,14 @@
   "license": "MIT",
   "scripts": {
     "start": "sucrase-node src/server.js",
+    "start:prod": "node dist/server.js",
     "dev": "nodemon src/server.js",
     "queue": "nodemon src/queue.js",
     "db:create": "sequelize db:create",
-    "db:migrate": "sequelize db:migrate"
+    "db:migrate": "sequelize db:migrate",
+    "lint": "eslint -c .eslintrc.js src/**/*.js",
+    "build": "babel src -d dist --source-maps",
+    "heroku-postbuild": "yarn build"
   },
   "dependencies": {
     "@sentry/node": "5.5.0",
@@ -33,6 +37,9 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.6.2",
+    "@babel/core": "^7.6.2",
+    "@babel/preset-env": "^7.6.2",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-config-prettier": "^6.0.0",
@@ -42,5 +49,10 @@
     "prettier": "^1.18.2",
     "sequelize-cli": "^5.5.0",
     "sucrase": "^3.10.1"
+  },
+  "engines": {
+    "node": "^10.15.0",
+    "npm": "^6.0.0",
+    "yarn": "^1.6.0"
   }
 }
