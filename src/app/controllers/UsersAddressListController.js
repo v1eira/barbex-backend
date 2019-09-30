@@ -54,9 +54,6 @@ class UsersAddressListController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      user_id: Yup.number()
-        .integer()
-        .required(),
       address_id: Yup.number()
         .integer()
         .required(),
@@ -67,7 +64,7 @@ class UsersAddressListController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const userExists = await User.findByPk(req.body.user_id);
+    const userExists = await User.findByPk(req.userId);
 
     if (!userExists) {
       return res.status(400).json({ error: 'User does not exists.' });
@@ -80,7 +77,7 @@ class UsersAddressListController {
     }
 
     const newAddress = await UsersAddressList.findOne({
-      where: { user_id: req.body.user_id, address_id: req.body.address_id },
+      where: { user_id: req.userId, address_id: req.body.address_id },
     });
 
     if (newAddress) {
@@ -89,7 +86,10 @@ class UsersAddressListController {
         .json({ error: 'Address already exists in users list.' });
     }
 
-    const userAddress = await UsersAddressList.create(req.body);
+    const userAddress = await UsersAddressList.create({
+      user_id: req.userId,
+      address_id: req.body.address_id,
+    });
 
     return res.json(userAddress);
   }
