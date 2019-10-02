@@ -20,6 +20,10 @@ class Barbershop extends Model {
       foreignKey: 'barbershop_id',
       sourceKey: 'id',
     });
+    this.hasMany(models.Barber, {
+      foreignKey: 'barbershop_id',
+      sourceKey: 'id',
+    });
     this.belongsTo(models.Address, { foreignKey: 'address_id', as: 'address' });
   }
 }

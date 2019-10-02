@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 
 import User from '../app/models/User';
 import Image from '../app/models/Image';
+import Barber from '../app/models/Barber';
 import Barbershop from '../app/models/Barbershop';
 import Operation from '../app/models/Operation';
 import Favorite from '../app/models/Favorite';
@@ -18,6 +19,7 @@ import databaseConfig from '../config/database';
 const models = [
   User,
   Image,
+  Barber,
   Barbershop,
   Operation,
   Favorite,

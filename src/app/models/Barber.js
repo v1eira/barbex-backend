@@ -1,12 +1,9 @@
-import Sequelize, { Model } from 'sequelize';
+import { Model } from 'sequelize';
 
 class Barber extends Model {
   static init(sequelize) {
     super.init(
-      {
-        name: Sequelize.STRING,
-        photo: Sequelize.STRING,
-      },
+      {},
       {
         sequelize,
       }
@@ -14,7 +11,18 @@ class Barber extends Model {
     return this;
   }
 
-  static associate(/* models */) {}
+  static associate(models) {
+    this.belongsTo(models.Barbershop, {
+      foreignKey: 'barbershop_id',
+      as: 'barbershop',
+      targetKey: 'id',
+    });
+    this.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      as: 'user',
+      targetKey: 'id',
+    });
+  }
 }
 
 export default Barber;
