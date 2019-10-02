@@ -26,12 +26,13 @@ class UserController {
       return res.status(400).json({ error: 'Email already in use.' });
     }
 
-    const { id, name, email } = await User.create(req.body);
+    const { id, name, email, barber } = await User.create(req.body);
 
     return res.json({
       id,
       name,
       email,
+      barber,
     });
   }
 
@@ -74,7 +75,7 @@ class UserController {
 
     await user.update(req.body);
 
-    const { id, name, avatar } = await User.findByPk(req.userId, {
+    const { id, name, barber, avatar } = await User.findByPk(req.userId, {
       include: [
         {
           model: Image,
@@ -88,6 +89,7 @@ class UserController {
       id,
       name,
       email,
+      barber,
       avatar,
     });
   }

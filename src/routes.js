@@ -12,6 +12,7 @@ import FullAddressController from './app/controllers/FullAddressController';
 import UsersAddressListController from './app/controllers/UsersAddressListController';
 import FavoriteController from './app/controllers/FavoriteController';
 import RatingController from './app/controllers/RatingController';
+import BarberController from './app/controllers/BarberController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -54,5 +55,7 @@ routes.delete('/favorites/:id', FavoriteController.delete);
 routes.get('/ratings/:id', RatingController.show);
 routes.get('/ratings/:id', RatingController.index);
 routes.post('/ratings', RatingController.store);
+
+routes.post('/barbershops/:barbershopId/barbers', BarberController.store);
 
 export default routes;
