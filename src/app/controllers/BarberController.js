@@ -64,10 +64,35 @@ class BarberController {
       ],
     });
 
+    await userExists.update({ barber: true });
+
     return res.json(barber);
   }
 
-  async index(req, res) {}
+  async index(req, res) {
+    const barbers = await Barber.findAll({
+      attributes: [],
+      where: { barbershop_id: req.params.barbershopId },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'barber'],
+          include: [
+            {
+              model: Image,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
+        },
+      ],
+    });
+
+    return res.json(barbers);
+  }
+
+  async delete(req, res) {}
 }
 
 export default new BarberController();
