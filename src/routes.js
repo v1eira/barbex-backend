@@ -58,5 +58,9 @@ routes.post('/ratings', RatingController.store);
 
 routes.post('/barbershops/:barbershopId/barbers', BarberController.store);
 routes.get('/barbershops/:barbershopId/barbers', BarberController.index);
+routes.delete(
+  '/barbershops/:barbershopId/barbers/:barberId',
+  BarberController.delete
+);
 
 export default routes;

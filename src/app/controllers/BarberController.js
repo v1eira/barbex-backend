@@ -92,7 +92,29 @@ class BarberController {
     return res.json(barbers);
   }
 
-  async delete(req, res) {}
+  async delete(req, res) {
+    const barber = await Barber.findOne({
+      where: { user_id: req.params.barberId },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name', 'email'],
+        },
+      ],
+    });
+
+    if (!barber) {
+      return res.status(400).json({ error: 'Barber does not exists.' });
+    }
+
+    const user = await User.findByPk(barber.user.id);
+
+    // check if who's accessing the route is the owner of the barbershop
+    await user.destroy();
+
+    return res.send();
+  }
 }
 
 export default new BarberController();
