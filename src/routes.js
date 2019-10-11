@@ -52,8 +52,8 @@ routes.get('/favorites', FavoriteController.index);
 routes.post('/favorites', FavoriteController.store);
 routes.delete('/favorites/:id', FavoriteController.delete);
 
-routes.get('/ratings/:id', RatingController.show);
-routes.get('/ratings/:id', RatingController.index);
+routes.get('/ratings/user/:id', RatingController.show);
+routes.get('/ratings/:barbershopId', RatingController.index);
 routes.post('/ratings', RatingController.store);
 
 routes.post('/barbershops/:barbershopId/barbers', BarberController.store);

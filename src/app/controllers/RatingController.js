@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 
 import User from '../models/User';
+import Image from '../models/Image';
 import Barbershop from '../models/Barbershop';
 
 import Rating from '../models/Rating';
@@ -40,20 +41,29 @@ class RatingController {
       return res.status(400).json({ error: 'User does not exists.' });
     }
 
-    const checkBarbershopExists = await Barbershop.findByPk(req.params.id);
+    const checkBarbershopExists = await Barbershop.findByPk(
+      req.params.barbershopId
+    );
 
     if (!checkBarbershopExists) {
       return res.status(400).json({ error: 'Barbershop does not exists.' });
     }
 
     const ratings = await Rating.findAll({
-      where: { barbershop_id: req.params.id },
-      attributes: ['id', 'grade'],
+      where: { barbershop_id: req.params.barbershopId },
+      attributes: ['id', 'grade', 'comment'],
       include: [
         {
           model: User,
           as: 'user',
           attributes: ['name'],
+          include: [
+            {
+              model: Image,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
         },
       ],
     });
@@ -72,6 +82,7 @@ class RatingController {
         .min(1)
         .max(5)
         .required(),
+      comment: Yup.string(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -90,11 +101,22 @@ class RatingController {
       return res.status(400).json({ error: 'Barbershop does not exists.' });
     }
 
-    const rating = await Rating.create({
-      user_id: req.userId,
-      barbershop_id: req.body.barbershop_id,
-      grade: req.body.grade,
-    });
+    let rating = null;
+
+    if (req.body.comment) {
+      rating = await Rating.create({
+        user_id: req.userId,
+        barbershop_id: req.body.barbershop_id,
+        grade: req.body.grade,
+        comment: req.body.comment,
+      });
+    } else {
+      rating = await Rating.create({
+        user_id: req.userId,
+        barbershop_id: req.body.barbershop_id,
+        grade: req.body.grade,
+      });
+    }
 
     const numberOfGrades = await Rating.count({
       where: { barbershop_id: req.body.barbershop_id },

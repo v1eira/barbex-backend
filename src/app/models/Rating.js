@@ -5,6 +5,7 @@ class Rating extends Model {
     super.init(
       {
         grade: Sequelize.FLOAT,
+        comment: Sequelize.STRING,
       },
       {
         sequelize,
