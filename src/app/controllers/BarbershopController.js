@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Barbershop from '../models/Barbershop';
 
 import User from '../models/User';
@@ -12,7 +13,28 @@ class BarbershopController {
     const { page = 1 } = req.query;
 
     const barbershops = await Barbershop.findAll({
-      attributes: ['id', 'name', 'address', 'cnpj'],
+      attributes: ['id', 'name', 'grade'],
+      include: [
+        {
+          model: Address,
+          as: 'address',
+          attributes: { exclude: ['city_id', 'createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: City,
+              as: 'city',
+              attributes: ['id', 'city'],
+              include: [
+                {
+                  model: State,
+                  as: 'state',
+                  attributes: ['id', 'state'],
+                },
+              ],
+            },
+          ],
+        },
+      ],
       order: [['createdAt', 'DESC']],
       limit: 20,
       offset: (page - 1) * 20,
@@ -70,6 +92,7 @@ class BarbershopController {
     const { id } = await Barbershop.create(req.body);
 
     const barbershop = await Barbershop.findByPk(id, {
+      attributes: { exclude: ['address_id', 'owner'] },
       include: [
         {
           model: Address,
@@ -103,7 +126,7 @@ class BarbershopController {
   async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),
-      address: Yup.string(),
+      address_id: Yup.string(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -112,30 +135,56 @@ class BarbershopController {
 
     if (req.body.name) {
       const nameExists = await Barbershop.findOne({
-        where: { name: req.body.name },
+        where: { id: { [Op.not]: req.params.id }, name: req.body.name },
       });
 
-      if (nameExists && nameExists.id !== Number(req.params.id)) {
+      if (nameExists) {
         return res
           .status(400)
           .json({ error: 'Barbershop name already exists.' });
       }
     }
 
+    const checkAddressExists = await Address.findByPk(req.body.address_id);
+
+    if (!checkAddressExists) {
+      return res.status(400).json({ error: 'Address does not exists' });
+    }
+
     const barbershop = await Barbershop.findByPk(req.params.id);
 
     await barbershop.update(req.body);
 
-    const { id, name, address, cnpj } = await Barbershop.findByPk(
-      req.params.id
-    );
-
-    return res.json({
-      id,
-      name,
-      address,
-      cnpj,
+    const updatedBarbershop = await Barbershop.findByPk(req.params.id, {
+      attributes: { exclude: ['address_id', 'owner'] },
+      include: [
+        {
+          model: Address,
+          as: 'address',
+          attributes: { exclude: ['city_id', 'createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: City,
+              as: 'city',
+              attributes: ['id', 'city'],
+              include: [
+                {
+                  model: State,
+                  as: 'state',
+                  attributes: ['id', 'state'],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: { exclude: ['password_hash', 'createdAt', 'updatedAt'] },
+        },
+      ],
     });
+
+    return res.json(updatedBarbershop);
   }
 }
 
