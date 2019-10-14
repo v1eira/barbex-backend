@@ -1,6 +1,11 @@
 import * as Yup from 'yup';
 import Barbershop from '../models/Barbershop';
+
+import User from '../models/User';
+
 import Address from '../models/Address';
+import City from '../models/City';
+import State from '../models/State';
 
 class BarbershopController {
   async index(req, res) {
@@ -19,12 +24,15 @@ class BarbershopController {
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
-      address_id: Yup.number()
-        .integer()
-        .required(),
       cnpj: Yup.string()
         .required()
         .length(14),
+      address_id: Yup.number()
+        .integer()
+        .required(),
+      owner: Yup.number()
+        .integer()
+        .required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -53,14 +61,43 @@ class BarbershopController {
       return res.status(400).json({ error: 'Address does not exists.' });
     }
 
-    const { id, name, address_id, cnpj } = await Barbershop.create(req.body);
+    const checkOwnerExists = await User.findByPk(req.body.owner);
 
-    return res.json({
-      id,
-      name,
-      address_id,
-      cnpj,
+    if (!checkOwnerExists) {
+      return res.status(400).json({ error: 'Owner does not exists.' });
+    }
+
+    const { id } = await Barbershop.create(req.body);
+
+    const barbershop = await Barbershop.findByPk(id, {
+      include: [
+        {
+          model: Address,
+          as: 'address',
+          attributes: { exclude: ['city_id', 'createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: City,
+              as: 'city',
+              attributes: ['id', 'city'],
+              include: [
+                {
+                  model: State,
+                  as: 'state',
+                  attributes: ['id', 'state'],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: User,
+          attributes: { exclude: ['password_hash', 'createdAt', 'updatedAt'] },
+        },
+      ],
     });
+
+    return res.json(barbershop);
   }
 
   async update(req, res) {

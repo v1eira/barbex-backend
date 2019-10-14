@@ -29,6 +29,8 @@ class FullAddressController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
+    const complement = req.body.complement ? req.body.complement : '';
+
     const cityExists = await City.findOne({
       where: { city: req.body.city },
     });
@@ -38,7 +40,7 @@ class FullAddressController {
         where: {
           street: req.body.street,
           number: req.body.number,
-          complement: req.body.complement,
+          complement,
           city_id: cityExists.id,
         },
         attributes: { exclude: ['city_id'] },
@@ -81,21 +83,13 @@ class FullAddressController {
     const { id } = await Address.create({
       street: req.body.street,
       number: req.body.number,
-      complement: req.body.complement,
+      complement,
       neighborhood: req.body.neighborhood,
       cep: req.body.cep,
       city_id: newCity.id,
     });
 
-    const {
-      street,
-      number,
-      complement,
-      neighborhood,
-      cep,
-      city,
-      state,
-    } = await Address.findByPk(id, {
+    const newAddress = await Address.findByPk(id, {
       include: [
         {
           model: City,
@@ -112,16 +106,7 @@ class FullAddressController {
       ],
     });
 
-    return res.json({
-      id,
-      street,
-      number,
-      complement,
-      neighborhood,
-      cep,
-      city,
-      state,
-    });
+    return res.json(newAddress);
   }
 
   async delete(req, res) {

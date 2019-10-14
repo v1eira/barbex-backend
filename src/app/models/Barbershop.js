@@ -25,6 +25,7 @@ class Barbershop extends Model {
       sourceKey: 'id',
     });
     this.belongsTo(models.Address, { foreignKey: 'address_id', as: 'address' });
+    this.belongsTo(models.User, { foreignKey: 'owner' });
   }
 }
 
