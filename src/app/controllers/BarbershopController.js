@@ -52,9 +52,6 @@ class BarbershopController {
       address_id: Yup.number()
         .integer()
         .required(),
-      owner: Yup.number()
-        .integer()
-        .required(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -83,13 +80,16 @@ class BarbershopController {
       return res.status(400).json({ error: 'Address does not exists.' });
     }
 
-    const checkOwnerExists = await User.findByPk(req.body.owner);
+    const checkOwnerExists = await User.findByPk(req.userId);
 
     if (!checkOwnerExists) {
       return res.status(400).json({ error: 'Owner does not exists.' });
     }
 
-    const { id } = await Barbershop.create(req.body);
+    const { id } = await Barbershop.create({
+      ...req.body,
+      owner: req.userId,
+    });
 
     const barbershop = await Barbershop.findByPk(id, {
       attributes: { exclude: ['address_id', 'owner'] },
@@ -162,7 +162,7 @@ class BarbershopController {
     if (barbershop.owner !== req.userId) {
       return res
         .status(401)
-        .json({ error: 'You are not the owner of ther barbershop.' });
+        .json({ error: 'User is not the owner of ther barbershop.' });
     }
 
     await barbershop.update(req.body);
@@ -197,6 +197,24 @@ class BarbershopController {
     });
 
     return res.json(updatedBarbershop);
+  }
+
+  async delete(req, res) {
+    const barbershop = await Barbershop.findByPk(req.params.id);
+
+    if (!barbershop) {
+      return res.status(400).json({ error: 'Barbershop does not exists.' });
+    }
+
+    if (barbershop.owner !== req.userId) {
+      return res
+        .status(401)
+        .json({ error: 'User is not the owner of the barbershop' });
+    }
+
+    await barbershop.destroy();
+
+    return res.send();
   }
 }
 
