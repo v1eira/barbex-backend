@@ -145,13 +145,25 @@ class BarbershopController {
       }
     }
 
-    const checkAddressExists = await Address.findByPk(req.body.address_id);
+    if (req.body.address_id) {
+      const checkAddressExists = await Address.findByPk(req.body.address_id);
 
-    if (!checkAddressExists) {
-      return res.status(400).json({ error: 'Address does not exists' });
+      if (!checkAddressExists) {
+        return res.status(400).json({ error: 'Address does not exists' });
+      }
     }
 
     const barbershop = await Barbershop.findByPk(req.params.id);
+
+    if (!barbershop) {
+      return res.status(400).json({ error: 'Barbershop does not exists. ' });
+    }
+
+    if (barbershop.owner !== req.userId) {
+      return res
+        .status(401)
+        .json({ error: 'You are not the owner of ther barbershop.' });
+    }
 
     await barbershop.update(req.body);
 
