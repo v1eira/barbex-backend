@@ -26,7 +26,10 @@ class UserController {
       return res.status(400).json({ error: 'Email already in use.' });
     }
 
-    const { id, name, email, barber } = await User.create(req.body);
+    const { id, name, email, barber } = await User.create({
+      ...req.body,
+      barber: false,
+    });
 
     return res.json({
       id,
