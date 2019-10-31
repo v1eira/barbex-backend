@@ -8,6 +8,8 @@ import Barbershop from '../app/models/Barbershop';
 import Operation from '../app/models/Operation';
 import Favorite from '../app/models/Favorite';
 import Rating from '../app/models/Rating';
+import Services from '../app/models/Services';
+import BarbershopServices from '../app/models/BarbershopServices';
 
 import State from '../app/models/State';
 import City from '../app/models/City';
@@ -28,6 +30,8 @@ const models = [
   City,
   Address,
   UsersAddressList,
+  Services,
+  BarbershopServices,
 ];
 
 class Database {
