@@ -1,10 +1,10 @@
-import { Model, Sequelize } from 'sequelize';
+import Sequelize, { Model } from 'sequelize';
 
-class BarbershopServices extends Model {
+class BarbershopService extends Model {
   static init(sequelize) {
     super.init(
       {
-        grade: Sequelize.FLOAT(10, 2),
+        price: Sequelize.FLOAT(10, 2),
       },
       {
         sequelize,
@@ -18,11 +18,11 @@ class BarbershopServices extends Model {
       foreignKey: 'barbershop_id',
       targetKey: 'id',
     });
-    this.belongsTo(models.Services, {
+    this.belongsTo(models.Service, {
       foreignKey: 'service_id',
       targetKey: 'id',
     });
   }
 }
 
-export default BarbershopServices;
+export default BarbershopService;
