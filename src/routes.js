@@ -14,6 +14,7 @@ import FavoriteController from './app/controllers/FavoriteController';
 import RatingController from './app/controllers/RatingController';
 import BarberController from './app/controllers/BarberController';
 import BarbershopServiceController from './app/controllers/BarbershopServiceController';
+import AppointmentController from './app/controllers/AppointmentController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -87,5 +88,9 @@ routes.delete(
   '/barbershops/:barbershopId/services/:serviceId',
   BarbershopServiceController.delete
 );
+
+routes.get('/appointments/', AppointmentController.index);
+routes.post('/appointments/', AppointmentController.store);
+routes.delete('/appointments/:id', AppointmentController.delete);
 
 export default routes;

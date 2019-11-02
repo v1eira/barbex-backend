@@ -15,6 +15,7 @@ class OperationController {
     const operations = await Operation.findAll({
       where: { barbershop_id: req.params.barbershopId },
       attributes: { exclude: ['barbershop_id', 'createdAt', 'updatedAt'] },
+      order: [['id']],
     });
 
     return res.json(operations);
@@ -23,9 +24,12 @@ class OperationController {
   async store(req, res) {
     const schema = Yup.object().shape({
       weekday: Yup.string()
-        .matches(/(domingo|segunda|terça|quarta|quinta|sexta|sábado)/, {
-          excludeEmptyString: true,
-        })
+        .matches(
+          /(domingo|segunda-feira|terça-feira|quarta-feira|quinta-feira|sexta-feira|sábado)/,
+          {
+            excludeEmptyString: true,
+          }
+        )
         .required(),
       opening_hour: Yup.string()
         .matches(/^[0-9]{2}:[0-9]{2}:[0-9]{2}$/)
