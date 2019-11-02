@@ -36,25 +36,31 @@ routes.post('/addresses', FullAddressController.store);
 routes.delete('/addresses/:id', FullAddressController.delete);
 routes.put('/addresses/:id', FullAddressController.update);
 
-routes.get('/addresseslists', UsersAddressListController.index);
-routes.post('/addresseslists', UsersAddressListController.store);
-routes.put('/addresseslists/:id', UsersAddressListController.update);
+routes.get('/users/addresseslists', UsersAddressListController.index);
+routes.post('/users/addresseslists', UsersAddressListController.store);
+routes.put('/users/addresseslists/:id', UsersAddressListController.update);
 
 routes.post('/barbershops', BarbershopController.store);
 routes.get('/barbershops', BarbershopController.index);
 routes.put('/barbershops/:id', BarbershopController.update);
 routes.delete('/barbershops/:id', BarbershopController.delete);
 
-routes.get('/operations/:barbershopId', OperationController.index);
-routes.post('/operations', OperationController.store);
-routes.put('/operations/:id', OperationController.update);
-routes.delete('/operations/:id', OperationController.delete);
+routes.get('/barbershops/:barbershopId/operations', OperationController.index);
+routes.post('/barbershops/:barbershopId/operations', OperationController.store);
+routes.put(
+  '/barbershops/:barbershopId/operations/:id',
+  OperationController.update
+);
+routes.delete(
+  '/barbershops/:barbershopId/operations/:id',
+  OperationController.delete
+);
 
 routes.get('/favorites', FavoriteController.index);
-routes.post('/favorites', FavoriteController.store);
+routes.post('/favorites/:barbershopId', FavoriteController.store);
 routes.delete('/favorites/:id', FavoriteController.delete);
 
-routes.get('/ratings/user/:id', RatingController.show);
+routes.get('/users/ratings/:id', RatingController.show);
 routes.get('/ratings/:barbershopId', RatingController.index);
 routes.post('/ratings', RatingController.store);
 

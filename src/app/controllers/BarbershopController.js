@@ -133,26 +133,6 @@ class BarbershopController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    if (req.body.name) {
-      const nameExists = await Barbershop.findOne({
-        where: { id: { [Op.not]: req.params.id }, name: req.body.name },
-      });
-
-      if (nameExists) {
-        return res
-          .status(400)
-          .json({ error: 'Barbershop name already exists.' });
-      }
-    }
-
-    if (req.body.address_id) {
-      const checkAddressExists = await Address.findByPk(req.body.address_id);
-
-      if (!checkAddressExists) {
-        return res.status(400).json({ error: 'Address does not exists' });
-      }
-    }
-
     const barbershop = await Barbershop.findByPk(req.params.id);
 
     if (!barbershop) {
@@ -163,6 +143,26 @@ class BarbershopController {
       return res
         .status(401)
         .json({ error: 'User is not the owner of ther barbershop.' });
+    }
+
+    if (req.body.address_id) {
+      const checkAddressExists = await Address.findByPk(req.body.address_id);
+
+      if (!checkAddressExists) {
+        return res.status(400).json({ error: 'Address does not exists' });
+      }
+    }
+
+    if (req.body.name) {
+      const nameExists = await Barbershop.findOne({
+        where: { id: { [Op.not]: req.params.id }, name: req.body.name },
+      });
+
+      if (nameExists) {
+        return res
+          .status(400)
+          .json({ error: 'Barbershop name already exists.' });
+      }
     }
 
     await barbershop.update(req.body);

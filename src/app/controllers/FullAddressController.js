@@ -5,6 +5,7 @@ import City from '../models/City';
 import Address from '../models/Address';
 
 import UsersAddressList from '../models/UsersAddressList';
+import Barbershop from '../models/Barbershop';
 
 class FullAddressController {
   async store(req, res) {
@@ -29,41 +30,11 @@ class FullAddressController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const complement = req.body.complement ? req.body.complement : '';
+    const complement = req.body.complement ? req.body.complement : null;
 
     const cityExists = await City.findOne({
       where: { city: req.body.city },
     });
-
-    if (cityExists) {
-      const addressExists = await Address.findOne({
-        where: {
-          street: req.body.street,
-          number: req.body.number,
-          complement,
-          city_id: cityExists.id,
-        },
-        attributes: { exclude: ['city_id'] },
-        include: [
-          {
-            model: City,
-            as: 'city',
-            attributes: ['id', 'city'],
-            include: [
-              {
-                model: State,
-                as: 'state',
-                attributes: ['id', 'state'],
-              },
-            ],
-          },
-        ],
-      });
-
-      if (addressExists) {
-        return res.json(addressExists);
-      }
-    }
 
     if (!cityExists) {
       const stateExists = await State.findOne({
@@ -116,6 +87,7 @@ class FullAddressController {
       return res.status(400).json({ error: 'Address does not exists.' });
     }
 
+    // Only users' addresses can be deleted
     const userIsOwner = await UsersAddressList.findOne({
       where: { user_id: req.userId, address_id: req.params.id },
     });
@@ -174,14 +146,26 @@ class FullAddressController {
       return res.status(400).json({ error: 'Address does not exists.' });
     }
 
-    const addressItem = await UsersAddressList.findOne({
+    const userAddress = await UsersAddressList.findOne({
       where: { address_id: req.params.id },
     });
 
-    if (Number(addressItem.user_id) !== req.userId) {
-      return res
-        .status(401)
-        .json({ error: 'User is not the owner of the address.' });
+    if (userAddress) {
+      if (req.userId !== userAddress.user_id) {
+        return res
+          .status(401)
+          .json({ error: 'User is not the owner of the address.' });
+      }
+    } else {
+      const barbershop = await Barbershop.findOne({
+        where: { address_id: req.params.id },
+      });
+
+      if (barbershop && req.userId !== barbershop.owner) {
+        return res
+          .status(401)
+          .json({ error: 'User is not the owner of the barbershop.' });
+      }
     }
 
     if (req.body.city && address.city.city !== req.body.city) {

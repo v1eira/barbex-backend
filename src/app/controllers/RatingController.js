@@ -8,39 +8,22 @@ import Rating from '../models/Rating';
 
 class RatingController {
   async show(req, res) {
-    const checkUserExists = await User.findByPk(req.userId);
+    const rating = await Rating.findByPk(req.params.id);
 
-    if (!checkUserExists) {
-      return res.status(400).json({ error: 'User does not exists.' });
-    }
-
-    const checkRatingExists = await Rating.findByPk(req.params.id);
-
-    if (!checkRatingExists) {
+    if (!rating) {
       return res.status(400).json({ error: 'Rating does not exists.' });
     }
 
-    if (checkRatingExists.user_id !== checkUserExists.id) {
+    if (rating.user_id !== req.userId) {
       return res
         .status(401)
         .json({ error: 'User is not the owner of the rating.' });
     }
 
-    const rating = await Rating.findOne({
-      where: { id: req.params.id },
-      attributes: { exclude: ['user_id', 'createdAt', 'updatedAt'] },
-    });
-
     return res.json(rating);
   }
 
   async index(req, res) {
-    const checkUserExists = await User.findByPk(req.userId);
-
-    if (!checkUserExists) {
-      return res.status(400).json({ error: 'User does not exists.' });
-    }
-
     const checkBarbershopExists = await Barbershop.findByPk(
       req.params.barbershopId
     );
@@ -51,7 +34,7 @@ class RatingController {
 
     const ratings = await Rating.findAll({
       where: { barbershop_id: req.params.barbershopId },
-      attributes: ['id', 'grade', 'comment'],
+      attributes: ['id', 'grade', 'comment', 'createdAt'],
       include: [
         {
           model: User,
@@ -66,6 +49,7 @@ class RatingController {
           ],
         },
       ],
+      order: [['createdAt', 'DESC']],
     });
 
     return res.json(ratings);
@@ -87,12 +71,6 @@ class RatingController {
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
-    }
-
-    const userExists = await User.findByPk(req.userId);
-
-    if (!userExists) {
-      return res.status(400).json({ error: 'User does not exists.' });
     }
 
     const barbershopExists = await Barbershop.findByPk(req.body.barbershop_id);
