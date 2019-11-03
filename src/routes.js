@@ -15,6 +15,7 @@ import RatingController from './app/controllers/RatingController';
 import BarberController from './app/controllers/BarberController';
 import BarbershopServiceController from './app/controllers/BarbershopServiceController';
 import AppointmentController from './app/controllers/AppointmentController';
+import ScheduleController from './app/controllers/ScheduleController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -89,8 +90,10 @@ routes.delete(
   BarbershopServiceController.delete
 );
 
-routes.get('/appointments/', AppointmentController.index);
-routes.post('/appointments/', AppointmentController.store);
+routes.get('/appointments', AppointmentController.index);
+routes.post('/appointments', AppointmentController.store);
 routes.delete('/appointments/:id', AppointmentController.delete);
+
+routes.get('/schedule', ScheduleController.index);
 
 export default routes;
