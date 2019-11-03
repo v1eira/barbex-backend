@@ -323,6 +323,18 @@ class AppointmentController {
           as: 'user',
           attributes: ['id', 'name', 'email'],
         },
+        {
+          model: Barber,
+          as: 'barber',
+          attributes: ['id'],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'name', 'email'],
+            },
+          ],
+        },
       ],
     });
 
@@ -336,7 +348,10 @@ class AppointmentController {
         .json({ error: 'Appointment is already canceled.' });
     }
 
-    if (req.userId !== appointment.user.id) {
+    if (
+      req.userId !== appointment.user.id &&
+      req.userId !== appointment.barber.user.id
+    ) {
       return res.status(401).json({
         error: "You don't have permission to cancel this appointment",
       });
@@ -357,6 +372,25 @@ class AppointmentController {
     await Queue.add(CancellationMail.key, {
       appointment,
     });
+
+    // Notify barber or user about the cancelation
+    const formattedDate = format(
+      appointment.date,
+      "'dia' dd 'de' MMMM', às' H:mm'h'",
+      { locale: pt }
+    );
+
+    if (req.userId === appointment.user.id) {
+      await Notification.create({
+        content: `O agendamento de ${appointment.user.name} para ${formattedDate} foi cancelado`,
+        user: appointment.barber.user.id,
+      });
+    } else if (req.userId === appointment.barber.user.id) {
+      await Notification.create({
+        content: `Seu agendamento para ${formattedDate} foi cancelado por ${appointment.barber.user.name}`,
+        user: appointment.user.id,
+      });
+    }
 
     return res.send();
   }
