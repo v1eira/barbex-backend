@@ -16,6 +16,7 @@ import BarberController from './app/controllers/BarberController';
 import BarbershopServiceController from './app/controllers/BarbershopServiceController';
 import AppointmentController from './app/controllers/AppointmentController';
 import ScheduleController from './app/controllers/ScheduleController';
+import AvailableController from './app/controllers/AvailableController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -95,5 +96,10 @@ routes.post('/appointments', AppointmentController.store);
 routes.delete('/appointments/:id', AppointmentController.delete);
 
 routes.get('/schedule', ScheduleController.index);
+
+routes.get(
+  '/barbershops/:barbershopId/barbers/:barberId/available',
+  AvailableController.index
+);
 
 export default routes;

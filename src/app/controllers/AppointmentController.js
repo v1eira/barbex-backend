@@ -240,7 +240,7 @@ class AppointmentController {
 
     // Create appointment
     const { id } = await Appointment.create({
-      date,
+      date: minuteStart,
       user_id: req.userId,
       barber_id,
       service: barbershopService.Service.name,
