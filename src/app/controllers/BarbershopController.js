@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Barbershop from '../models/Barbershop';
 
+import Image from '../models/Image';
 import User from '../models/User';
 
 import Address from '../models/Address';
@@ -33,6 +34,11 @@ class BarbershopController {
               ],
             },
           ],
+        },
+        {
+          model: Image,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url'],
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -117,6 +123,11 @@ class BarbershopController {
           model: User,
           attributes: { exclude: ['password_hash', 'createdAt', 'updatedAt'] },
         },
+        {
+          model: Image,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url'],
+        },
       ],
     });
 
@@ -127,6 +138,7 @@ class BarbershopController {
     const schema = Yup.object().shape({
       name: Yup.string(),
       address_id: Yup.string(),
+      avatar_id: Yup.number(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -150,6 +162,14 @@ class BarbershopController {
 
       if (!checkAddressExists) {
         return res.status(400).json({ error: 'Address does not exists' });
+      }
+    }
+
+    if (req.body.avatar_id) {
+      const checkAvatarExists = await Image.findByPk(req.body.avatar_id);
+
+      if (!checkAvatarExists) {
+        return res.status(400).json({ error: 'Avatar does not exists' });
       }
     }
 
@@ -193,6 +213,11 @@ class BarbershopController {
           model: User,
           attributes: { exclude: ['password_hash', 'createdAt', 'updatedAt'] },
         },
+        {
+          model: Image,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url'],
+        },
       ],
     });
 
@@ -212,7 +237,10 @@ class BarbershopController {
         .json({ error: 'User is not the owner of the barbershop' });
     }
 
+    const avatar = await Image.findByPk(barbershop.avatar_id);
+
     await barbershop.destroy();
+    await avatar.destroy();
 
     return res.send();
   }

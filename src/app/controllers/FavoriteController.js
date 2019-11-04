@@ -1,4 +1,5 @@
 import Barbershop from '../models/Barbershop';
+import Image from '../models/Image';
 
 import Favorite from '../models/Favorite';
 
@@ -12,6 +13,13 @@ class FavoriteController {
           model: Barbershop,
           as: 'barbershop',
           attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: Image,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
         },
       ],
     });
@@ -48,6 +56,13 @@ class FavoriteController {
           model: Barbershop,
           as: 'barbershop',
           attributes: { exclude: ['createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: Image,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+          ],
         },
       ],
     });
