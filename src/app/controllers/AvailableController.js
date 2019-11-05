@@ -17,6 +17,14 @@ import Operation from '../models/Operation';
 
 class AvailableController {
   async index(req, res) {
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
+    }
+
+    if (!Number.isInteger(Number(req.params.barberId))) {
+      return res.status(400).json({ error: 'Invalid barber id' });
+    }
+
     const { date } = req.query;
 
     if (!date) {

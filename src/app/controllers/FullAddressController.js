@@ -81,6 +81,10 @@ class FullAddressController {
   }
 
   async delete(req, res) {
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).json({ error: 'Invalid address id' });
+    }
+
     const address = await Address.findByPk(req.params.id);
 
     if (!address) {
@@ -123,6 +127,10 @@ class FullAddressController {
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
+    }
+
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).json({ error: 'Invalid address id' });
     }
 
     const address = await Address.findByPk(req.params.id, {

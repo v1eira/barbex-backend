@@ -1,3 +1,5 @@
+import * as Yup from 'yup';
+
 import Barbershop from '../models/Barbershop';
 import Image from '../models/Image';
 
@@ -28,14 +30,24 @@ class FavoriteController {
   }
 
   async store(req, res) {
-    const barbershopExists = await Barbershop.findByPk(req.params.barbershopId);
+    const schema = Yup.object().shape({
+      barbershop_id: Yup.number()
+        .integer()
+        .required(),
+    });
+
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation fails' });
+    }
+
+    const barbershopExists = await Barbershop.findByPk(req.body.barbershop_id);
 
     if (!barbershopExists) {
       return res.status(400).json({ error: 'Barbershop does not exists.' });
     }
 
     const checkFavoriteExists = await Favorite.findOne({
-      where: { user_id: req.userId, barbershop_id: req.params.barbershopId },
+      where: { user_id: req.userId, barbershop_id: req.body.barbershop_id },
     });
 
     if (checkFavoriteExists) {
@@ -46,7 +58,7 @@ class FavoriteController {
 
     const { id } = await Favorite.create({
       user_id: req.userId,
-      barbershop_id: req.params.barbershopId,
+      barbershop_id: req.body.barbershop_id,
     });
 
     const favorite = await Favorite.findByPk(id, {
@@ -71,6 +83,10 @@ class FavoriteController {
   }
 
   async delete(req, res) {
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).json({ error: 'Invalid favorite id' });
+    }
+
     const favorite = await Favorite.findByPk(req.params.id);
 
     if (!favorite) {

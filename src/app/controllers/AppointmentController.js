@@ -316,6 +316,10 @@ class AppointmentController {
   }
 
   async delete(req, res) {
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).json({ error: 'Invalid appointment id' });
+    }
+
     const appointment = await Appointment.findByPk(req.params.id, {
       include: [
         {

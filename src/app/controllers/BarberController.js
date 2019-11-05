@@ -22,6 +22,10 @@ class BarberController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
+    }
+
     const barbershopExists = await Barbershop.findByPk(req.params.barbershopId);
 
     if (!barbershopExists) {
@@ -79,6 +83,10 @@ class BarberController {
   }
 
   async index(req, res) {
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
+    }
+
     const barbershop = await Barbershop.findByPk(req.params.barbershopId);
 
     if (!barbershop) {
@@ -108,6 +116,14 @@ class BarberController {
   }
 
   async delete(req, res) {
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
+    }
+
+    if (!Number.isInteger(Number(req.params.barberId))) {
+      return res.status(400).json({ error: 'Invalid barber id' });
+    }
+
     const barbershop = await Barbershop.findByPk(req.params.barbershopId);
 
     if (!barbershop) {

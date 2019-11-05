@@ -12,6 +12,10 @@ class NotificationController {
   }
 
   async update(req, res) {
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ error: 'Invalid notification id' });
+    }
+
     const notification = await Notification.findById(req.params.id);
 
     if (!notification) {

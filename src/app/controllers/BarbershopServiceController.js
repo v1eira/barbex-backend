@@ -6,6 +6,10 @@ import BarbershopService from '../models/BarbershopService';
 
 class BarbershopServiceController {
   async index(req, res) {
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
+    }
+
     const barbershopServices = await BarbershopService.findAll({
       attributes: ['id', 'price'],
       where: { barbershop_id: req.params.barbershopId },
@@ -32,6 +36,10 @@ class BarbershopServiceController {
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
+    }
+
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
     }
 
     const barbershop = await Barbershop.findByPk(req.params.barbershopId);
@@ -84,6 +92,14 @@ class BarbershopServiceController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
+    }
+
+    if (!Number.isInteger(Number(req.params.serviceId))) {
+      return res.status(400).json({ error: 'Invalid service id' });
+    }
+
     const barbershop = await Barbershop.findByPk(req.params.barbershopId);
 
     if (!barbershop) {
@@ -108,6 +124,14 @@ class BarbershopServiceController {
   }
 
   async delete(req, res) {
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
+    }
+
+    if (!Number.isInteger(Number(req.params.serviceId))) {
+      return res.status(400).json({ error: 'Invalid service id' });
+    }
+
     const barbershop = await Barbershop.findByPk(req.params.barbershopId);
 
     if (!barbershop) {

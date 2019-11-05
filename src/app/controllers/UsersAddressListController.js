@@ -90,6 +90,10 @@ class UsersAddressListController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).json({ error: 'Invalid user address id' });
+    }
+
     const address = await UsersAddressList.findByPk(req.params.id);
 
     if (!address) {

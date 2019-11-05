@@ -8,6 +8,10 @@ import Rating from '../models/Rating';
 
 class RatingController {
   async show(req, res) {
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).json({ error: 'Invalid rating id' });
+    }
+
     const rating = await Rating.findByPk(req.params.id);
 
     if (!rating) {
@@ -24,6 +28,10 @@ class RatingController {
   }
 
   async index(req, res) {
+    if (!Number.isInteger(Number(req.params.barbershopId))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
+    }
+
     const checkBarbershopExists = await Barbershop.findByPk(
       req.params.barbershopId
     );
