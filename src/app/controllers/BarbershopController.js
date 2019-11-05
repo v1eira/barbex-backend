@@ -49,13 +49,15 @@ class BarbershopController {
     return res.json(barbershops);
   }
 
-  async one(req, res) {
-    const { id } = req.params;
-    if (Number.isNaN(Number.parseInt(id, 10))) {
-      return res.status(400).jsno({ error: 'wrong id provided' });
+  async show(req, res) {
+    if (!Number.isInteger(Number(req.params.id))) {
+      return res.status(400).json({ error: 'Invalid barbershop id' });
     }
+
+    const { id } = req.params;
+
     const barbershop = await Barbershop.findByPk(id, {
-      attributes: { exclude: ['address_id', 'owner'] },
+      attributes: { exclude: ['address_id', 'avatar_id', 'owner'] },
       include: [
         {
           model: Address,
@@ -83,6 +85,10 @@ class BarbershopController {
         },
       ],
     });
+
+    if (!barbershop) {
+      return res.status(400).json({ error: 'Barbershop does not exists' });
+    }
 
     return res.json(barbershop);
   }
