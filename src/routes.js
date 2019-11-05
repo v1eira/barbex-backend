@@ -45,6 +45,7 @@ routes.put('/users/addresseslists/:id', UsersAddressListController.update);
 
 routes.post('/barbershops', BarbershopController.store);
 routes.get('/barbershops', BarbershopController.index);
+routes.get('/barbershops/:id', BarbershopController.one);
 routes.put('/barbershops/:id', BarbershopController.update);
 routes.delete('/barbershops/:id', BarbershopController.delete);
 

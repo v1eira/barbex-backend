@@ -49,6 +49,44 @@ class BarbershopController {
     return res.json(barbershops);
   }
 
+  async one(req, res) {
+    const { id } = req.params;
+    if (Number.isNaN(Number.parseInt(id, 10))) {
+      return res.status(400).jsno({ error: 'wrong id provided' });
+    }
+    const barbershop = await Barbershop.findByPk(id, {
+      attributes: { exclude: ['address_id', 'owner'] },
+      include: [
+        {
+          model: Address,
+          as: 'address',
+          attributes: { exclude: ['city_id', 'createdAt', 'updatedAt'] },
+          include: [
+            {
+              model: City,
+              as: 'city',
+              attributes: ['id', 'city'],
+              include: [
+                {
+                  model: State,
+                  as: 'state',
+                  attributes: ['id', 'state'],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: Image,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url'],
+        },
+      ],
+    });
+
+    return res.json(barbershop);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
