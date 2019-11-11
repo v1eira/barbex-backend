@@ -13,6 +13,7 @@ import UsersAddressListController from './app/controllers/UsersAddressListContro
 import FavoriteController from './app/controllers/FavoriteController';
 import RatingController from './app/controllers/RatingController';
 import BarberController from './app/controllers/BarberController';
+import OwnerController from './app/controllers/OwnerController';
 import BarbershopServiceController from './app/controllers/BarbershopServiceController';
 import AppointmentController from './app/controllers/AppointmentController';
 import ScheduleController from './app/controllers/ScheduleController';
@@ -74,6 +75,8 @@ routes.delete(
   '/barbershops/:barbershopId/barbers/:barberId',
   BarberController.delete
 );
+
+routes.get('/owner/barbershops', OwnerController.index);
 
 routes.get(
   '/barbershops/:barbershopId/services',
