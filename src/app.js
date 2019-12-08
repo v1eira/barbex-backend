@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 import express from 'express';
+import path from 'path';
 import Youch from 'youch';
 import * as Sentry from '@sentry/node';
 import morgan from 'morgan';
@@ -28,6 +29,10 @@ class App {
     this.server.use(Sentry.Handlers.requestHandler());
     this.server.use(express.json());
     this.server.use(morgan('common'));
+    this.server.use(
+      '/images',
+      express.static(path.resolve(__dirname, '..', 'tmp', 'uploads'))
+    );
   }
 
   routes() {
