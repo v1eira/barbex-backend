@@ -62,6 +62,11 @@ class AppointmentController {
           attributes: ['id', 'name'],
           include: [
             {
+              model: Image,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url'],
+            },
+            {
               model: Address,
               as: 'address',
               attributes: { exclude: ['city_id', 'createdAt', 'updatedAt'] },
