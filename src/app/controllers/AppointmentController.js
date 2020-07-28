@@ -25,17 +25,28 @@ import Notification from '../schemas/Notification';
 
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
+import { Op } from 'sequelize';
 
 class AppointmentController {
   async index(req, res) {
-    const { page = 1 } = req.query;
+    const { page = 1, filter = null } = req.query;
+
+    const whereStatement = {
+      user_id: req.userId,
+    };
+
+    if (filter) {
+      whereStatement.date = filter === 'past'
+      ? { [Op.lt]: new Date() }
+      : { [Op.gt]: new Date() }
+    }
 
     const appointments = await Appointment.findAll({
-      where: { user_id: req.userId },
+      where: whereStatement,
       order: [['date', 'DESC']],
       attributes: { exclude: ['user_id', 'barber_id', 'barbershop_id'] },
-      limit: 20,
-      offset: (page - 1) * 20,
+      limit: 10,
+      offset: (page - 1) * 10,
       include: [
         {
           model: Barber,
