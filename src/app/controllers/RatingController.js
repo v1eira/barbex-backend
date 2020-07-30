@@ -5,6 +5,7 @@ import Image from '../models/Image';
 import Barbershop from '../models/Barbershop';
 
 import Rating from '../models/Rating';
+import Appointment from '../models/Appointment';
 
 class RatingController {
   async show(req, res) {
@@ -65,7 +66,7 @@ class RatingController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      barbershop_id: Yup.number()
+      appointment_id: Yup.number()
         .integer()
         .required(),
       grade: Yup.number()
@@ -81,9 +82,23 @@ class RatingController {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    const barbershopExists = await Barbershop.findByPk(req.body.barbershop_id);
+    const appointment = await Appointment.findByPk(req.body.appointment_id);
 
-    if (!barbershopExists) {
+    if (!appointment) {
+      return res.status(400).json({ error: 'Appointment does not exists.' });
+    }
+
+    if (appointment.user_id !== req.userId){
+      return res.status(401).json({ error: 'User is not who made the appointment.' });
+    }
+
+    if(appointment.rating_id) {
+      return res.status(400).json({ error: 'Appointment was already rated.' });
+    }
+
+    const barbershop = await Barbershop.findByPk(appointment.barbershop_id);
+
+    if (!barbershop) {
       return res.status(400).json({ error: 'Barbershop does not exists.' });
     }
 
@@ -92,31 +107,33 @@ class RatingController {
     if (req.body.comment) {
       rating = await Rating.create({
         user_id: req.userId,
-        barbershop_id: req.body.barbershop_id,
+        barbershop_id: barbershop.id,
         grade: req.body.grade,
         comment: req.body.comment,
       });
     } else {
       rating = await Rating.create({
         user_id: req.userId,
-        barbershop_id: req.body.barbershop_id,
+        barbershop_id: barbershop.id,
         grade: req.body.grade,
       });
     }
 
+    await appointment.update({ rating_id: rating.id });
+
     const numberOfGrades = await Rating.count({
-      where: { barbershop_id: req.body.barbershop_id },
+      where: { barbershop_id: barbershop.id },
     });
 
     const sumOfGrades = await Rating.sum('grade', {
-      where: { barbershop_id: req.body.barbershop_id },
+      where: { barbershop_id: barbershop.id },
     });
 
     const barbershopGrade = sumOfGrades / numberOfGrades;
 
     const roundGrade = parseFloat(barbershopGrade.toFixed(1));
 
-    await barbershopExists.update({ grade: roundGrade });
+    await barbershop.update({ grade: roundGrade });
 
     return res.json(rating);
   }

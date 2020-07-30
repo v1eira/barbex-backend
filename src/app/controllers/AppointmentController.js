@@ -26,6 +26,7 @@ import Notification from '../schemas/Notification';
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
 import { Op } from 'sequelize';
+import Rating from '../models/Rating';
 
 class AppointmentController {
   async index(req, res) {
@@ -44,7 +45,7 @@ class AppointmentController {
     const appointments = await Appointment.findAll({
       where: whereStatement,
       order: [['date', 'DESC']],
-      attributes: { exclude: ['user_id', 'barber_id', 'barbershop_id'] },
+      attributes: { exclude: ['user_id', 'barber_id', 'barbershop_id', 'rating_id'] },
       limit: 10,
       offset: (page - 1) * 10,
       include: [
@@ -98,6 +99,11 @@ class AppointmentController {
             },
           ],
         },
+        {
+          model: Rating,
+          as: 'rating',
+          attributes: ['id', 'grade'],
+        }
       ],
     });
 

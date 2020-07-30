@@ -31,6 +31,7 @@ class Appointment extends Model {
   }
 
   static associate(models) {
+    this.belongsTo(models.Rating, { foreignKey: 'rating_id', as: 'rating' });
     this.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
     this.belongsTo(models.Barber, { foreignKey: 'barber_id', as: 'barber' });
     this.belongsTo(models.Barbershop, {
