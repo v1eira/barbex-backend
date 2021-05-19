@@ -11,10 +11,15 @@ import State from '../models/State';
 
 class BarbershopController {
   async index(req, res) {
-    const { page = 1 } = req.query;
+    const { page = 1, search = '' } = req.query;
 
     const barbershops = await Barbershop.findAll({
       attributes: ['id', 'name', 'grade'],
+      where: {
+        name: {
+          [Op.iLike]: `%${search}%`,
+        },
+      },
       include: [
         {
           model: Address,
